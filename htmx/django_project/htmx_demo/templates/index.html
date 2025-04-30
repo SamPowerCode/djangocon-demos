@@ -1,0 +1,44 @@
+{% load django_htmx %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django HTMX Demo</title>
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+    {% django_htmx_script %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <h1>Django HTMX Demo</h1>
+    
+    <h2>Get Current Time</h2>
+    <div id="time-container">
+        <button hx-get="{% url 'get_time' %}" hx-target="#time-display" hx-swap="innerHTML">
+            Get Current Time
+        </button>
+        <div id="time-display"></div>
+    </div>
+
+    <h2>Ted Quotes List</h2>
+    <form hx-post="{% url 'add_todo' %}" hx-target="#todo-list" hx-swap="beforeend">
+        <input type="text" name="title" placeholder="New todo">
+        <button type="submit">Add</button>
+    </form>
+
+    <div id="todo-list">
+        {% for todo in todos %}
+        <div id="todo-{{ todo.id }}">
+            <span>{{ todo.title }}</span>
+            <button hx-post="{% url 'toggle_todo' todo.id %}" hx-swap="outerHTML" hx-target="closest div">
+                {% if todo.completed %}✅{% else %}⬜{% endif %}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        document.body.addEventListener('todoToggled', (event) => {
+            console.log('Todo toggled:', event.detail);
+        });
+    </script>
+</body>
+</html>

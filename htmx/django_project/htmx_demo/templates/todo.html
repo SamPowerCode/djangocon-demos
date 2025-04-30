@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django HTMX Ted Quotes Demo</title>
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+</head>
+<body>
+    <h1>Django HTMX Ted Quotes Demo</h1>
+    
+    <form hx-post="/add/" hx-target="#todo-list" hx-swap="beforeend">
+        <input type="text" name="title" placeholder="New todo">
+        <button type="submit">Add</button>
+    </form>
+
+    <div id="todo-list">
+        {% for todo in todos %}
+        <div id="todo-{{ todo.id }}">
+            <span>{{ todo.title }}</span>
+            <button hx-post="/toggle/{{ todo.id }}" hx-swap="outerHTML" hx-target="closest div">
+                {% if todo.completed %}✅{% else %}⬜{% endif %}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
